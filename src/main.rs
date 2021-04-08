@@ -2,7 +2,6 @@
 
 use std::fs;
 use std::path::Path;
-use std::ffi::OsStr;
 
 use walkdir::WalkDir;
 use std::collections::HashMap;
@@ -112,23 +111,22 @@ fn md5(p:&Path) -> (String,String) {
 
     // let hs = String::from_utf8_lossy(d);
     // return (String::from("0x01393092"), f.to_string());
-    return (format!("{:?}", m.finalize().as_slice().iter()
-	.collect::<Vec<&u8>>()), f.to_string());
+    return (f.to_string(), format!("{:?}", m.finalize()[..].into_iter().collect::<Vec<&u8>>()));
 }
 
 
-
-// fn walkmap(root:String, keyer:fn(String) -> String) -> HashMap<String, Vec<String>> {
-//     // [(str, path)]
-//     let files = WalkDir::new(root)
-// 	.into_iter()
-// 	.filter_map(|e| e.ok())
-// 	.map(md5)
-// 	.collect::<Vec<_>>();
-//     let mut m = HashMap::new();
-//     m.insert(root, vec!["foo".to_string(), "bar".to_string()]);
-//     return m;
-// }
+fn walkmap(root:String, keyer:fn(String) -> String) -> HashMap<String, Vec<String>> {
+    // [(str, path)]
+    let files = WalkDir::new(root)
+	.into_iter()
+	.filter_map(|e| e.ok())
+	.map(|e| md5(e.path()))
+	.collect::<Vec<_>>();
+    println!("{:?}", files);
+    let mut m = HashMap::new();
+    m.insert(keyer("@@@".to_string()), vec!["foo".to_string(), "bar".to_string()]);
+    return m;
+}
 
 fn main() {
     let a = Vec3 { x:1.0, y:1.0, z:1.0 };
@@ -175,6 +173,6 @@ fn main() {
 	    Err(e) => println!("{:?}", e)
 	}
     }
-
-    //walkmap("Hello".to_string(), |s| s);
+    println!("[WALK]");
+    walkmap("/tmp/fdt/".to_string(), |s| s);
 }
