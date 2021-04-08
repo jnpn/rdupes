@@ -1,0 +1,12 @@
+[package]
+name = "rdupes"
+version = "0.1.0"
+authors = ["Johan PONIN <johan.ponin.pro@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+walkdir = "2"
+md-5 = "0.9.1"
+chrono = "0.4.19"
