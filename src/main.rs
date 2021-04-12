@@ -10,21 +10,6 @@ use glob::glob;
 
 use data_encoding::HEXUPPER;
 
-#[derive(Debug)]
-struct Pair<A> {
-    a:A,
-    b:A,
-}
-
-fn g() {
-    let p = Pair { a:0,b:1 }; // { a:0, b:1 };
-    println!("({},{})", p.a, p.b);
-}
-
-fn f(x: &u8, f: fn(u8) -> u8) -> u8 {
-    return f(*x + *x);
-}
-
 fn gen_hm(c:u32) -> HashMap<u32,String> {
     let mut m = HashMap::new();
     for i in 0..c {
@@ -61,7 +46,7 @@ fn md5(p:&Path) -> (String,String) {
 }
 
 fn walkmap(root:String, keyer:fn(String) -> String) -> HashMap<String, Vec<String>> {
-    // Vec<(String,  String)>
+
     let files: Vec<(String, String)> = WalkDir::new(root)
 	.into_iter()
 	.filter_map(Result::ok)
@@ -69,20 +54,7 @@ fn walkmap(root:String, keyer:fn(String) -> String) -> HashMap<String, Vec<Strin
 	.collect::<Vec<_>>();
     let mut m:HashMap<String, Vec<String>> = HashMap::new();
 
-    // m.insert(keyer("@@@".to_string()), vec!["foo".to_string(), "bar".to_string()]);
     println!("{}", keyer("@@@".to_string()));
-    // for (n,v) in &files {
-    // 	println!("{}:-{:?}", n, v);
-    // }
-
-    // let mut n:HashMap<String, u32> = HashMap::new();
-    // for (_,h) in files {
-    // 	if n.contains_key(&h) {
-    // 	    n.entry(h).or_insert(100);
-    // 	} else {
-    // 	    n.insert(h, 1);
-    // 	}
-    // }
     
     for (f,h) in files {
 	match m.get_mut(&h) {
@@ -132,15 +104,9 @@ fn main() {
     
     println!("----");
     println!("[WALK]");
-    for (k,v) in walkmap("/home/noob/bin/".to_string(), |s| s) {
+    for (k,v) in walkmap("/home/noob/Documents/".to_string(), |s| s) {
 	println!("{} -> {:?}", k, v);
     }
-
-    g();
-
-    let x:u8 = 23;
-    let y = f(&x, |x| x+x);
-    println!("{} -> {}", x, y);
 
     println!("----");
     println!("bye.");
