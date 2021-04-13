@@ -6,17 +6,8 @@ use std::path::Path;
 use walkdir::WalkDir;
 use std::collections::HashMap;
 use md5::{Md5, Digest};
-use glob::glob;
 
 use data_encoding::HEXUPPER;
-
-fn gen_hm(c:u32) -> HashMap<u32,String> {
-    let mut m = HashMap::new();
-    for i in 0..c {
-	m.insert(i,format!("({})", i));
-    }
-    return m;
-}
 
 fn md5(p:&Path) -> (String,String) {
     let mut m = Md5::new();
@@ -54,7 +45,7 @@ fn walkmap(root:String, keyer:fn(String) -> String) -> HashMap<String, Vec<Strin
 	.collect::<Vec<_>>();
     let mut m:HashMap<String, Vec<String>> = HashMap::new();
 
-    println!("{}", keyer("@@@".to_string()));
+    format!("{}", keyer("@".to_string()));
     
     for (f,h) in files {
 	match m.get_mut(&h) {
@@ -66,48 +57,10 @@ fn walkmap(root:String, keyer:fn(String) -> String) -> HashMap<String, Vec<Strin
     return m;
 }
 
+const ROOT:&str = "/home/noob/Code/fdupes/testdir/";
+
 fn main() {
-    let m = gen_hm(12);
-    println!("[gen_hm]\t{:?}", m);
-    println!("----");
 
-    let (a,b) = md5(std::path::Path::new("/home/noob/.aliases"));
-    println!("[1hash] {} # {}", a, b);
-    println!("----");
-
-    let root = "/home/noob/bin/*";
-
-    for e in glob(root).expect("glob failed") {
-	match e {
-	    Ok(p) => {
-		let (a,b) = md5(p.as_path());
-		println!("{} # {}", a, b);
-	    },
-	    Err(e) => println!("{:?}", e)
-	}
-    }
-
-    // match glob(root) {
-    // 	Ok(paths) => {
-    // 	    for p in paths {
-    // 		match p {
-    // 		    Ok(pb) => {
-    // 		    	let (a,b) = md5(pb.as_path());
-    // 			println!("{} {}", a, b);
-    // 		    },
-    // 		    Err(f) => println!("{:?}", f)
-    // 		}
-    // 	    };
-    // 	}
-    // 	Err(e) => println!("{:?}", e),
-    // };
-    
-    println!("----");
-    println!("[WALK]");
-    for (k,v) in walkmap("/home/noob/Documents/".to_string(), |s| s) {
-	println!("{} -> {:?}", k, v);
-    }
-
-    println!("----");
+    for (k,v) in walkmap(ROOT.to_string(), |s| s) { println!("{} -> {:?}", k, v); }
     println!("bye.");
 }
