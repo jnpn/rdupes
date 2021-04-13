@@ -28,8 +28,8 @@ fn md5(p:&Path) -> (String,String) {
     let b = a.into_iter().collect::<Vec<&u8>>();
     let mut r:[u8; 16] = [0 ; 16];
     let mut i = 0;
-    for u in &b {
-	r[i] = **u;
+    for u in b {
+	r[i] = *u;
 	i += 1;
     }
     let s = String::from(HEXUPPER.encode(&r));
