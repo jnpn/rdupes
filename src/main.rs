@@ -2,10 +2,14 @@
 
 use std::fs;
 use std::path::Path;
+use std::thread;
+use std::time::Duration;
 
 use walkdir::WalkDir;
 use std::collections::HashMap;
 use md5::{Md5, Digest};
+
+use rayon::prelude::*;
 
 use data_encoding::HEXUPPER;
 
@@ -71,10 +75,23 @@ fn walkmap(root:String, keyer:fn(walkdir::DirEntry) -> (String, String)) -> Hash
 }
 
 fn main() {
+    // let h = thread::spawn(|| {
+    // 	for i in 10..20 {
+    // 	    println!("{} [t]", i);
+    // 	    thread::sleep(Duration::from_millis(1000));
+    // 	}
+    // });
+
     for a in std::env::args().skip(1) {
 	println!("deduping {:?}", a);
 	for (k,v) in walkmap(a, |e| md5(e.path())) {
 	    println!("{} -> {:?}", k, v);
 	}
     }
+
+    // match h.join() {
+    // 	Ok(_) => println!("bye"),
+    // 	Err(e) => eprintln!("{:?}", e),
+    // };
+
 }
