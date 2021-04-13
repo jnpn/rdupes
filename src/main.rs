@@ -36,16 +36,14 @@ fn md5(p:&Path) -> (String,String) {
     return (f.to_string(), s);
 }
 
-fn walkmap(root:String, keyer:fn(String) -> String) -> HashMap<String, Vec<String>> {
+fn walkmap(root:String, keyer:fn(walkdir::DirEntry) -> (String, String)) -> HashMap<String, Vec<String>> {
 
     let files: Vec<(String, String)> = WalkDir::new(root)
 	.into_iter()
 	.filter_map(Result::ok)
-	.map(|e| md5(e.path()))
+	.map(keyer)
 	.collect::<Vec<_>>();
     let mut m:HashMap<String, Vec<String>> = HashMap::new();
-
-    format!("{}", keyer("@".to_string()));
     
     for (f,h) in files {
 	match m.get_mut(&h) {
@@ -60,7 +58,7 @@ fn walkmap(root:String, keyer:fn(String) -> String) -> HashMap<String, Vec<Strin
 const ROOT:&str = "/home/noob/Code/fdupes/testdir/";
 
 fn main() {
-
-    for (k,v) in walkmap(ROOT.to_string(), |s| s) { println!("{} -> {:?}", k, v); }
-    println!("bye.");
+    for (k,v) in walkmap(ROOT.to_string(), |e| md5(e.path())) {
+	println!("{} -> {:?}", k, v);
+    }
 }
